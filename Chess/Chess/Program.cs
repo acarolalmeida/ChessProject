@@ -1,4 +1,4 @@
-﻿using Board;
+﻿using BoardLayer;
 
 namespace Chess
 {
@@ -6,8 +6,8 @@ namespace Chess
     {
         static void Main()
         {
-            Position p = new Position(3, 4);
-            Console.WriteLine($"Posição: {p}");
+            Board board = new Board(8, 8);
+            Console.ReadLine();
         }
     }
 }
