@@ -12,5 +12,10 @@
             Column = column;
             pieces = new Piece[row, column];
         }
+
+        public Piece Piece(int row, int column)
+        {
+            return pieces[row, column];
+        }
     }
 }

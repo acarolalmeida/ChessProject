@@ -7,7 +7,7 @@ namespace Chess
         static void Main()
         {
             Board board = new Board(8, 8);
-            Console.ReadLine();
+            Screen.PrintBoard(board);
         }
     }
 }
