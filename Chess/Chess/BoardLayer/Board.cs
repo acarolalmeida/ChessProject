@@ -17,5 +17,11 @@
         {
             return pieces[row, column];
         }
+
+        public void IncludePiece(Piece piece, Position position)
+        {
+            pieces[position.Row, position.Column] = piece;
+            piece.Position = position;
+        }
     }
 }
