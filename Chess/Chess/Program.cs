@@ -10,15 +10,20 @@ namespace Chess
             try
             {
                 
-                Board board = new Board(8, 8);
-                board.IncludePiece(new Rook(Color.Black, board), new Position(0, 0));
-                board.IncludePiece(new Rook(Color.Black, board), new Position(1, 3));
-                board.IncludePiece(new King(Color.Black, board), new Position(2, 4));
+                ChessMatch match = new ChessMatch();
 
-                board.IncludePiece(new Rook(Color.White, board), new Position(3, 5));
+                while (!match.finished)
+                {
+                    Console.Clear();
+                    Screen.PrintBoard(match.board);
 
-                Screen.PrintBoard(board);
-                
+                    Console.Write("\nOrigin: ");
+                    Position origin = Screen.ReadChessPosition().ToPosition();
+                    Console.Write("Destination: ");
+                    Position destination = Screen.ReadChessPosition().ToPosition();
+
+                    match.ExecuteMove(origin, destination);
+                }
             }
             catch(BoardException ex) 
             {
