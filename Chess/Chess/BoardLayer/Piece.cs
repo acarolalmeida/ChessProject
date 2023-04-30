@@ -1,6 +1,6 @@
 ﻿namespace BoardLayer
 {
-    class Piece
+    abstract class Piece
     {
         public Position Position { get; set; }
         public Color Color { get; protected set; }
@@ -16,8 +16,10 @@
         }
 
         public void IncreaseMovesCounter()
-        { 
+        {
             MovesCounter++;
         }
+
+        public abstract bool[,] PossibleMoves();
     }
 }
