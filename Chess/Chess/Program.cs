@@ -7,7 +7,6 @@ namespace Chess
     {
         static void Main()
         {
-            /*
             try
             {
                 
@@ -16,6 +15,8 @@ namespace Chess
                 board.IncludePiece(new Rook(Color.Black, board), new Position(1, 3));
                 board.IncludePiece(new King(Color.Black, board), new Position(2, 4));
 
+                board.IncludePiece(new Rook(Color.White, board), new Position(3, 5));
+
                 Screen.PrintBoard(board);
                 
             }
@@ -23,11 +24,6 @@ namespace Chess
             {
                 Console.WriteLine(ex.Message);
             }
-            */
-
-            ChessPosition position = new ChessPosition('c', 7);
-            Console.WriteLine(position);
-            Console.WriteLine(position.ToPosition());
         }
     }
 }
