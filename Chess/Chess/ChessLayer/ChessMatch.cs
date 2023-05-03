@@ -8,6 +8,8 @@ namespace ChessLayer
         public bool Finished { get; private set; }
         public int Turn { get; private set; }
         public Color NextPlayer { get; private set; }
+        private HashSet<Piece> pieces;
+        private HashSet<Piece> capturedPieces;
 
         public ChessMatch()
         {
@@ -15,6 +17,8 @@ namespace ChessLayer
             Turn = 1;
             NextPlayer = Color.White;
             Finished = false;
+            pieces = new HashSet<Piece>();
+            capturedPieces = new HashSet<Piece>();
             IncludePieces();
         }
 
@@ -24,6 +28,10 @@ namespace ChessLayer
             p.IncreaseMovesCounter();
             Piece capturedPiece = Board.RemovePiece(destination);
             Board.IncludePiece(p, destination);
+            if (capturedPiece != null)
+            {
+                capturedPieces.Add(capturedPiece);
+            }
         }
 
         public void PerformPlay(Position origin, Position destination)
@@ -69,21 +77,56 @@ namespace ChessLayer
             }
         }
 
+        public HashSet<Piece> CapturedPieces(Color color)
+        { 
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece p in capturedPieces)
+            {
+                if (p.Color == color)
+                {
+                    aux.Add(p);
+                }
+            }
+
+            return aux;
+        }
+
+        public HashSet<Piece> PiecesInGame(Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece p in pieces)
+            {
+                if (p.Color == color)
+                {
+                    aux.Add(p);
+                }
+            }
+
+            aux.ExceptWith(CapturedPieces(color));
+            return aux;
+        }
+
+        public void IncludeNewPiece(char column, int row, Piece piece)
+        {
+            Board.IncludePiece(piece, new ChessPosition(column, row).ToPosition());
+            pieces.Add(piece);
+        }
+
         private void IncludePieces()
         {
-            Board.IncludePiece(new Rook(Color.White, Board), new ChessPosition('c', 1).ToPosition());
-            Board.IncludePiece(new Rook(Color.White, Board), new ChessPosition('c', 2).ToPosition());
-            Board.IncludePiece(new Rook(Color.White, Board), new ChessPosition('d', 2).ToPosition());
-            Board.IncludePiece(new Rook(Color.White, Board), new ChessPosition('e', 2).ToPosition());
-            Board.IncludePiece(new Rook(Color.White, Board), new ChessPosition('e', 1).ToPosition());
-            Board.IncludePiece(new King(Color.White, Board), new ChessPosition('d', 1).ToPosition());
+            IncludeNewPiece('c', 1, new Rook(Color.White, Board));
+            IncludeNewPiece('c', 2, new Rook(Color.White, Board));
+            IncludeNewPiece('d', 2, new Rook(Color.White, Board));
+            IncludeNewPiece('e', 1, new Rook(Color.White, Board));
+            IncludeNewPiece('e', 2, new Rook(Color.White, Board));
+            IncludeNewPiece('d', 1, new King(Color.White, Board));
 
-            Board.IncludePiece(new Rook(Color.Black, Board), new ChessPosition('c', 7).ToPosition());
-            Board.IncludePiece(new Rook(Color.Black, Board), new ChessPosition('c', 8).ToPosition());
-            Board.IncludePiece(new Rook(Color.Black, Board), new ChessPosition('d', 7).ToPosition());
-            Board.IncludePiece(new Rook(Color.Black, Board), new ChessPosition('e', 7).ToPosition());
-            Board.IncludePiece(new Rook(Color.Black, Board), new ChessPosition('e', 8).ToPosition());
-            Board.IncludePiece(new King(Color.Black, Board), new ChessPosition('d', 8).ToPosition());
+            IncludeNewPiece('c', 7, new Rook(Color.Black, Board));
+            IncludeNewPiece('c', 8, new Rook(Color.Black, Board));
+            IncludeNewPiece('d', 7, new Rook(Color.Black, Board));
+            IncludeNewPiece('e', 7, new Rook(Color.Black, Board));
+            IncludeNewPiece('e', 8, new Rook(Color.Black, Board));
+            IncludeNewPiece('d', 8, new King(Color.Black, Board));
         }
     }
 }
