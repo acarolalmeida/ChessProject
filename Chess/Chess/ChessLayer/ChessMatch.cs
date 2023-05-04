@@ -89,7 +89,7 @@ namespace ChessLayer
 
         public void ValidateDestination(Position origin, Position destination)
         {
-            if (!Board.Piece(origin).CanMoveTo(destination))
+            if (!Board.Piece(origin).PossibleMovement(destination))
             {
                 throw new BoardException("Invalid destination position!");
             }
