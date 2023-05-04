@@ -60,8 +60,15 @@ namespace ChessLayer
             }
 
             Check = IsInCheck(Opponent(NextPlayer)) ? true : false;
-            Turn++;
-            ChangePlayer();
+            if (TestCheckmate(Opponent(NextPlayer)))
+            {
+                Finished = true;
+            }
+            else
+            {
+                Turn++;
+                ChangePlayer();
+            }
         }
 
         public void ValidateOrigin(Position position)
@@ -129,6 +136,39 @@ namespace ChessLayer
             return aux;
         }
 
+        public bool TestCheckmate(Color color)
+        {
+            if (!IsInCheck(color))
+            {
+                return false;
+            }
+
+            foreach (Piece piece in PiecesInGame(color))
+            {
+                bool[,] mat = piece.PossibleMoves();
+                for (int i = 0; i < Board.Row; i++)
+                {
+                    for (int j = 0; j < Board.Column; j++)
+                    {
+                        if (mat[i, j])
+                        {
+                            Position origin = piece.Position;
+                            Position target = new Position(i, j);
+                            Piece capturedPiece = ExecuteMove(origin, target);
+                            bool testCheck = IsInCheck(color);
+                            UndoMove(origin, target, capturedPiece);
+                            if (!testCheck)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
         private Color Opponent(Color color)
         {
             if (color == Color.White)
@@ -182,7 +222,7 @@ namespace ChessLayer
 
         private void IncludePieces()
         {
-            IncludeNewPiece('c', 1, new Rook(Color.White, Board));
+            /*IncludeNewPiece('c', 1, new Rook(Color.White, Board));
             IncludeNewPiece('c', 2, new Rook(Color.White, Board));
             IncludeNewPiece('d', 2, new Rook(Color.White, Board));
             IncludeNewPiece('e', 1, new Rook(Color.White, Board));
@@ -194,7 +234,14 @@ namespace ChessLayer
             IncludeNewPiece('d', 7, new Rook(Color.Black, Board));
             IncludeNewPiece('e', 7, new Rook(Color.Black, Board));
             IncludeNewPiece('e', 8, new Rook(Color.Black, Board));
-            IncludeNewPiece('d', 8, new King(Color.Black, Board));
+            IncludeNewPiece('d', 8, new King(Color.Black, Board));*/
+
+            IncludeNewPiece('c', 1, new Rook(Color.White, Board));
+            IncludeNewPiece('d', 1, new King(Color.White, Board));
+            IncludeNewPiece('h', 7, new Rook(Color.White, Board));
+
+            IncludeNewPiece('a', 8, new King(Color.Black, Board));
+            IncludeNewPiece('b', 8, new Rook(Color.Black, Board));
         }
     }
 }

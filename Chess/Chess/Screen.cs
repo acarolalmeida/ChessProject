@@ -11,10 +11,19 @@ namespace Chess
             PrintBoard(match.Board);
             PrintCapturedPieces(match);
             Console.WriteLine($"\n\nTurn: {match.Turn}");
-            Console.WriteLine($"Waiting for player: {match.NextPlayer}");
-            if (match.Check)
+
+            if (!match.Finished)
             {
-                Console.WriteLine("CHECK!");
+                Console.WriteLine($"Waiting for player: {match.NextPlayer}");
+                if (match.Check)
+                {
+                    Console.WriteLine("CHECK!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("CHECKMATE!");
+                Console.WriteLine($"Winner: {match.NextPlayer}");
             }
         }
 
