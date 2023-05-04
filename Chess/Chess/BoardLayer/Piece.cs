@@ -20,6 +20,11 @@
             MovesCounter++;
         }
 
+        public void DecreaseMovesCounter()
+        {
+            MovesCounter--;
+        }
+
         public bool PossibleMovesExist()
         {
             bool[,] mat = PossibleMoves();

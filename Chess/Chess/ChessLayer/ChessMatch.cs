@@ -8,6 +8,7 @@ namespace ChessLayer
         public bool Finished { get; private set; }
         public int Turn { get; private set; }
         public Color NextPlayer { get; private set; }
+        public bool Check { get; private set; }
         private HashSet<Piece> pieces;
         private HashSet<Piece> capturedPieces;
 
@@ -17,12 +18,13 @@ namespace ChessLayer
             Turn = 1;
             NextPlayer = Color.White;
             Finished = false;
+            Check = false;
             pieces = new HashSet<Piece>();
             capturedPieces = new HashSet<Piece>();
             IncludePieces();
         }
 
-        public void ExecuteMove(Position origin, Position destination)
+        public Piece ExecuteMove(Position origin, Position destination)
         {
             Piece p = Board.RemovePiece(origin);
             p.IncreaseMovesCounter();
@@ -32,11 +34,32 @@ namespace ChessLayer
             {
                 capturedPieces.Add(capturedPiece);
             }
+            return capturedPiece;
+        }
+
+        public void UndoMove(Position origin, Position destination, Piece capturedPiece)
+        {
+            Piece p = Board.RemovePiece(destination);
+            p.DecreaseMovesCounter();
+            if (capturedPiece != null)
+            {
+                Board.IncludePiece(capturedPiece, destination);
+                capturedPieces.Remove(capturedPiece);
+            }
+
+            Board.IncludePiece(p, origin);
         }
 
         public void PerformPlay(Position origin, Position destination)
         {
-            ExecuteMove(origin, destination);
+            Piece capturedPiece = ExecuteMove(origin, destination);
+            if (IsInCheck(NextPlayer))
+            {
+                UndoMove(origin, destination, capturedPiece);
+                throw new BoardException("You can't put yourself in check!");
+            }
+
+            Check = IsInCheck(Opponent(NextPlayer)) ? true : false;
             Turn++;
             ChangePlayer();
         }
@@ -104,6 +127,51 @@ namespace ChessLayer
 
             aux.ExceptWith(CapturedPieces(color));
             return aux;
+        }
+
+        private Color Opponent(Color color)
+        {
+            if (color == Color.White)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.White;
+            }
+        }
+
+        private Piece King(Color color)
+        {
+            foreach (Piece p in PiecesInGame(color))
+            {
+                if (p is King)
+                {
+                    return p;
+                }
+            }
+
+            return null;
+        }
+
+        public bool IsInCheck(Color color)
+        {
+            foreach (Piece p in PiecesInGame(Opponent(color)))
+            {
+                Piece K = King(color);
+                if (K == null)
+                {
+                    throw new BoardException($"There is no {color} king in the board!");
+                }
+
+                bool[,] mat = p.PossibleMoves();
+                if (mat[K.Position.Row, K.Position.Column])
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void IncludeNewPiece(char column, int row, Piece piece)
