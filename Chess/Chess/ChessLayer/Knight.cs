@@ -41,7 +41,7 @@ namespace ChessLayer
             }
 
             pos.DefineValues(Position.Row - 1, Position.Column + 2);
-            while (Board.ValidPosition(pos) && CanMove(pos))
+            if (Board.ValidPosition(pos) && CanMove(pos))
             {
                 mat[pos.Row, pos.Column] = true;
             }
@@ -65,7 +65,7 @@ namespace ChessLayer
             }
 
             pos.DefineValues(Position.Row + 1, Position.Column - 2);
-            while (Board.ValidPosition(pos) && CanMove(pos))
+            if (Board.ValidPosition(pos) && CanMove(pos))
             {
                 mat[pos.Row, pos.Column] = true;
             }

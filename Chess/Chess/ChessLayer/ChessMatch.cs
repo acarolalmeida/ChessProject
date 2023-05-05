@@ -34,6 +34,27 @@ namespace ChessLayer
             {
                 capturedPieces.Add(capturedPiece);
             }
+
+            //SPECIAL MOVE - castling short
+            if (p is King && destination.Column == origin.Column + 2)
+            {
+                Position originRook = new Position(origin.Row, origin.Column + 3);
+                Position targetRook = new Position(origin.Row, origin.Column + 1);
+                Piece rook = Board.RemovePiece(originRook);
+                rook.IncreaseMovesCounter();
+                Board.IncludePiece(rook, targetRook);
+            }
+
+            //SPECIAL MOVE - castling long
+            if (p is King && destination.Column == origin.Column - 2)
+            {
+                Position originRook = new Position(origin.Row, origin.Column - 4);
+                Position targetRook = new Position(origin.Row, origin.Column - 1);
+                Piece rook = Board.RemovePiece(originRook);
+                rook.IncreaseMovesCounter();
+                Board.IncludePiece(rook, targetRook);
+            }
+
             return capturedPiece;
         }
 
@@ -48,6 +69,26 @@ namespace ChessLayer
             }
 
             Board.IncludePiece(p, origin);
+
+            //SPECIAL MOVE - castling short
+            if (p is King && destination.Column == origin.Column + 2)
+            {
+                Position originRook = new Position(origin.Row, origin.Column + 3);
+                Position targetRook = new Position(origin.Row, origin.Column + 1);
+                Piece rook = Board.RemovePiece(targetRook);
+                rook.DecreaseMovesCounter();
+                Board.IncludePiece(rook, originRook);
+            }
+
+            //SPECIAL MOVE - castling long
+            if (p is King && destination.Column == origin.Column - 2)
+            {
+                Position originRook = new Position(origin.Row, origin.Column - 4);
+                Position targetRook = new Position(origin.Row, origin.Column - 1);
+                Piece rook = Board.RemovePiece(targetRook);
+                rook.DecreaseMovesCounter();
+                Board.IncludePiece(rook, originRook);
+            }
         }
 
         public void PerformPlay(Position origin, Position destination)
@@ -226,7 +267,7 @@ namespace ChessLayer
             IncludeNewPiece('b', 1, new Knight(Color.White, Board));
             IncludeNewPiece('c', 1, new Bishop(Color.White, Board));
             IncludeNewPiece('d', 1, new Queen(Color.White, Board));
-            IncludeNewPiece('e', 1, new King(Color.White, Board));
+            IncludeNewPiece('e', 1, new King(Color.White, Board, this));
             IncludeNewPiece('f', 1, new Bishop(Color.White, Board));
             IncludeNewPiece('g', 1, new Knight(Color.White, Board));
             IncludeNewPiece('h', 1, new Rook(Color.White, Board));
@@ -243,7 +284,7 @@ namespace ChessLayer
             IncludeNewPiece('b', 8, new Knight(Color.Black, Board));
             IncludeNewPiece('c', 8, new Bishop(Color.Black, Board));
             IncludeNewPiece('d', 8, new Queen(Color.Black, Board));
-            IncludeNewPiece('e', 8, new King(Color.Black, Board));
+            IncludeNewPiece('e', 8, new King(Color.Black, Board, this));
             IncludeNewPiece('f', 8, new Bishop(Color.Black, Board));
             IncludeNewPiece('g', 8, new Knight(Color.Black, Board));
             IncludeNewPiece('h', 8, new Rook(Color.Black, Board));

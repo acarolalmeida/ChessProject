@@ -79,7 +79,7 @@ namespace ChessLayer
                 {
                     break;
                 }
-                pos.DefineValues(Position.Row - 1, Position.Column - 1);
+                pos.DefineValues(pos.Row - 1, pos.Column - 1);
             }
 
             //northeast
@@ -91,7 +91,7 @@ namespace ChessLayer
                 {
                     break;
                 }
-                pos.DefineValues(Position.Row - 1, Position.Column + 1);
+                pos.DefineValues(pos.Row - 1, pos.Column + 1);
             }
 
             //southeast 
@@ -103,7 +103,7 @@ namespace ChessLayer
                 {
                     break;
                 }
-                pos.DefineValues(Position.Row + 1, Position.Column + 1);
+                pos.DefineValues(pos.Row + 1, pos.Column + 1);
             }
 
             //southwest
@@ -115,7 +115,7 @@ namespace ChessLayer
                 {
                     break;
                 }
-                pos.DefineValues(Position.Row + 1, Position.Column - 1);
+                pos.DefineValues(pos.Row + 1, pos.Column - 1);
             }
 
             return mat;
