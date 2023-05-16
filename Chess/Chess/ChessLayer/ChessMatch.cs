@@ -142,6 +142,21 @@ namespace ChessLayer
                 throw new BoardException("You can't put yourself in check!");
             }
 
+            Piece p = Board.Piece(destination);
+
+            //SPECIAL MOVE - pawn promotion
+            if (p is Pawn)
+            {
+                if ((p.Color == Color.White && destination.Row == 0) || (p.Color == Color.Black && destination.Row == 7))
+                {
+                    p = Board.RemovePiece(destination);
+                    pieces.Remove(p);
+                    Piece queen = new Queen(p.Color, Board);
+                    Board.IncludePiece(queen, destination);
+                    pieces.Add(queen);
+                }
+            }
+
             Check = IsInCheck(Opponent(NextPlayer)) ? true : false;
             if (TestCheckmate(Opponent(NextPlayer)))
             {
@@ -154,7 +169,6 @@ namespace ChessLayer
             }
 
             //SPECIAL MOVE - en passant
-            Piece p = Board.Piece(destination);
             vulnerableEnPassant = (p is Pawn && (destination.Row == origin.Row - 2 || destination.Row == origin.Row + 2)) ? p : null;
         }
 
