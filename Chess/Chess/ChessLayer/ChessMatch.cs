@@ -4,14 +4,15 @@ namespace ChessLayer
 {
     class ChessMatch
     {
+        private HashSet<Piece> pieces;
+        private HashSet<Piece> capturedPieces;
+        public Piece vulnerableEnPassant { get; private set; }
         public Board Board { get; private set; }
         public bool Finished { get; private set; }
         public int Turn { get; private set; }
         public Color NextPlayer { get; private set; }
         public bool Check { get; private set; }
-        private HashSet<Piece> pieces;
-        private HashSet<Piece> capturedPieces;
-
+        
         public ChessMatch()
         {
             Board = new Board(8, 8);
@@ -21,6 +22,7 @@ namespace ChessLayer
             Check = false;
             pieces = new HashSet<Piece>();
             capturedPieces = new HashSet<Piece>();
+            vulnerableEnPassant = null;
             IncludePieces();
         }
 
@@ -53,6 +55,26 @@ namespace ChessLayer
                 Piece rook = Board.RemovePiece(originRook);
                 rook.IncreaseMovesCounter();
                 Board.IncludePiece(rook, targetRook);
+            }
+
+            //SPECIAL MOVE - en passant
+            if (p is Pawn)
+            {
+                if (origin.Column != destination.Column && capturedPiece == null)
+                {
+                    Position positionPawn;
+                    if (p.Color == Color.White)
+                    {
+                        positionPawn = new Position(destination.Row + 1, destination.Column);
+                    }
+                    else
+                    {
+                        positionPawn = new Position(destination.Row - 1, destination.Column);
+                    }
+
+                    capturedPiece = Board.RemovePiece(positionPawn);
+                    capturedPieces.Add(capturedPiece);
+                }
             }
 
             return capturedPiece;
@@ -89,6 +111,26 @@ namespace ChessLayer
                 rook.DecreaseMovesCounter();
                 Board.IncludePiece(rook, originRook);
             }
+
+            //SPECIAL MOVE - en passant
+            if (p is Pawn)
+            {
+                if (origin.Column != destination.Column && capturedPiece == vulnerableEnPassant)
+                {
+                    Piece pawn = Board.RemovePiece(destination);
+                    Position positionPawn;
+                    if (p.Color == Color.White)
+                    {
+                        positionPawn = new Position(3, destination.Column);
+                    }
+                    else
+                    {
+                        positionPawn = new Position(4, destination.Column);
+                    }
+
+                    Board.IncludePiece(pawn, positionPawn);
+                }
+            }
         }
 
         public void PerformPlay(Position origin, Position destination)
@@ -110,6 +152,10 @@ namespace ChessLayer
                 Turn++;
                 ChangePlayer();
             }
+
+            //SPECIAL MOVE - en passant
+            Piece p = Board.Piece(destination);
+            vulnerableEnPassant = (p is Pawn && (destination.Row == origin.Row - 2 || destination.Row == origin.Row + 2)) ? p : null;
         }
 
         public void ValidateOrigin(Position position)
@@ -271,14 +317,14 @@ namespace ChessLayer
             IncludeNewPiece('f', 1, new Bishop(Color.White, Board));
             IncludeNewPiece('g', 1, new Knight(Color.White, Board));
             IncludeNewPiece('h', 1, new Rook(Color.White, Board));
-            IncludeNewPiece('a', 2, new Pawn(Color.White, Board));
-            IncludeNewPiece('b', 2, new Pawn(Color.White, Board));
-            IncludeNewPiece('c', 2, new Pawn(Color.White, Board));
-            IncludeNewPiece('d', 2, new Pawn(Color.White, Board));
-            IncludeNewPiece('e', 2, new Pawn(Color.White, Board));
-            IncludeNewPiece('f', 2, new Pawn(Color.White, Board));
-            IncludeNewPiece('g', 2, new Pawn(Color.White, Board));
-            IncludeNewPiece('h', 2, new Pawn(Color.White, Board));
+            IncludeNewPiece('a', 2, new Pawn(Color.White, Board, this));
+            IncludeNewPiece('b', 2, new Pawn(Color.White, Board, this));
+            IncludeNewPiece('c', 2, new Pawn(Color.White, Board, this));
+            IncludeNewPiece('d', 2, new Pawn(Color.White, Board, this));
+            IncludeNewPiece('e', 2, new Pawn(Color.White, Board, this));
+            IncludeNewPiece('f', 2, new Pawn(Color.White, Board, this));
+            IncludeNewPiece('g', 2, new Pawn(Color.White, Board, this));
+            IncludeNewPiece('h', 2, new Pawn(Color.White, Board, this));
 
             IncludeNewPiece('a', 8, new Rook(Color.Black, Board));
             IncludeNewPiece('b', 8, new Knight(Color.Black, Board));
@@ -288,14 +334,14 @@ namespace ChessLayer
             IncludeNewPiece('f', 8, new Bishop(Color.Black, Board));
             IncludeNewPiece('g', 8, new Knight(Color.Black, Board));
             IncludeNewPiece('h', 8, new Rook(Color.Black, Board));
-            IncludeNewPiece('a', 7, new Pawn(Color.Black, Board));
-            IncludeNewPiece('b', 7, new Pawn(Color.Black, Board));
-            IncludeNewPiece('c', 7, new Pawn(Color.Black, Board));
-            IncludeNewPiece('d', 7, new Pawn(Color.Black, Board));
-            IncludeNewPiece('e', 7, new Pawn(Color.Black, Board));
-            IncludeNewPiece('f', 7, new Pawn(Color.Black, Board));
-            IncludeNewPiece('g', 7, new Pawn(Color.Black, Board));
-            IncludeNewPiece('h', 7, new Pawn(Color.Black, Board));
+            IncludeNewPiece('a', 7, new Pawn(Color.Black, Board, this));
+            IncludeNewPiece('b', 7, new Pawn(Color.Black, Board, this));
+            IncludeNewPiece('c', 7, new Pawn(Color.Black, Board, this));
+            IncludeNewPiece('d', 7, new Pawn(Color.Black, Board, this));
+            IncludeNewPiece('e', 7, new Pawn(Color.Black, Board, this));
+            IncludeNewPiece('f', 7, new Pawn(Color.Black, Board, this));
+            IncludeNewPiece('g', 7, new Pawn(Color.Black, Board, this));
+            IncludeNewPiece('h', 7, new Pawn(Color.Black, Board, this));
         }
     }
 }
